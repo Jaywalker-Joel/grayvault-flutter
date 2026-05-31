@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
 import 'home_screen.dart';
+import 'package:dio/dio.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -42,7 +43,22 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       }
     } catch (e) {
-      setState(() => _errorMessage = _parseError(e));
+      String errorMsg = 'Something went wrong. Please try again.';
+      if (e is DioException) {
+        if (e.response != null) {
+          final detail = e.response?.data['detail']?.toString() ?? '';
+          if (detail.contains('Invalid username or password')) {
+            errorMsg = 'Invalid username or password.';
+          } else if (detail.contains('already taken')) {
+            errorMsg = 'Username already taken.';
+          } else if (detail.isNotEmpty) {
+            errorMsg = detail;
+          }
+        } else {
+          errorMsg = 'Cannot connect to GRAYVAULT server. Is it running?';
+        }
+      }
+      setState(() => _errorMessage = errorMsg);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
