@@ -65,7 +65,7 @@ String _parseError(dynamic e) {
   if (msg.contains('at least 6')) return 'Password must be at least 6 characters.';
   if (msg.contains('Connection') || msg.contains('SocketException') || msg.contains('connect')) 
     return 'Cannot connect to GRAYVAULT server. Is it running?';
-  if (msg.isEmpty) return 'Something went wrong. Please try again.';
+  if (msg.isEmpty) return msg.isEmpty ? 'Something went wrong.' : msg;
   return msg;
 }
 
