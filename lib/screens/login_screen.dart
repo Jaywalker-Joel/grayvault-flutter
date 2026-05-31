@@ -49,12 +49,25 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   String _parseError(dynamic e) {
-    final msg = e.toString();
+    // Extract message from DioException
+    String msg = e.toString();
+    try {
+      if (e.runtimeType.toString().contains('Dio')) {
+        final response = (e as dynamic).response;
+        if (response != null) {
+          final detail = response.data['detail']?.toString() ?? '';
+          msg = detail;
+        }
+      }
+    } catch (_) {}
+    
     if (msg.contains('Invalid username or password')) return 'Invalid username or password.';
-    if (msg.contains('already taken'))  return 'Username already taken.';
-    if (msg.contains('at least 6'))     return 'Password must be at least 6 characters.';
-    if (msg.contains('Connection'))     return 'Cannot connect to GRAYVAULT server. Is it running?';
-    return 'Something went wrong. Please try again.';
+    if (msg.contains('already taken')) return 'Username already taken.';
+    if (msg.contains('at least 6')) return 'Password must be at least 6 characters.';
+    if (msg.contains('Connection') || msg.contains('SocketException') || msg.contains('connect')) 
+      return 'Cannot connect to GRAYVAULT server. Is it running?';
+    if (msg.isEmpty) return 'Something went wrong. Please try again.';
+    return msg;
   }
 
   void _showSnack(String msg) {
