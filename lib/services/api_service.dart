@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://10.42.0.1:8000';
+  static const String baseUrl = 'https://grayvault-app-production.up.railway.app';
   late Dio _dio;
 
   ApiService() {
