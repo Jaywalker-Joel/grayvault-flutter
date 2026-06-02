@@ -43,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       }
     } catch (e) {
-      String errorMsg = 'Something went wrong. Please try again.';
+      String errorMsg;
       if (e is DioException) {
         if (e.response != null) {
           final detail = e.response?.data['detail']?.toString() ?? '';
@@ -53,10 +53,14 @@ class _LoginScreenState extends State<LoginScreen> {
             errorMsg = 'Username already taken.';
           } else if (detail.isNotEmpty) {
             errorMsg = detail;
+          } else {
+            errorMsg = 'Server error: ${e.response?.statusCode}';
           }
         } else {
-          errorMsg = 'Cannot connect to GRAYVAULT server. Is it running?';
+          errorMsg = 'Network error: ${e.type} — ${e.message}';
         }
+      } else {
+        errorMsg = 'Unexpected error: ${e.toString()}';
       }
       setState(() => _errorMessage = errorMsg);
     } finally {
